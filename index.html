@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <style>
+            body{
+                margin: 0px;
+                padding: 0px;
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="calibragem">
+                <p>
+                    Tamanho <span id="tamanho"></span>
+                </p>
+    
+                <input type="range" name="size" min="0" max="30" step="1" value="0">
+    
+                <div>
+                    <button type="button" class="sub">-</button>
+                    <button type="button" class="sum">+</button>
+                </div>
+    
+                <div id="regua"></div>
+    
+                <div class="card-reference">
+                    <img src="cartao.png">
+                </div>
+            </div>
+
+            <div class="validacao">
+                <p>
+                    Tamanho <span id="tamanhoElemento"></span>
+                </p>
+    
+                <input type="range" name="sizeElemento" min="0" max="300" step="1" value="0">
+
+                <div>
+                    <button type="button" class="subElemento">-</button>
+                    <button type="button" class="sumElemento">+</button>
+                </div>
+
+                <div class="elemento">
+
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .container{
+                width: 1000px;
+                margin: 0 auto;
+                display: flex;
+            }
+            .container .calibragem{
+                width: 50%;
+            }
+            .container .validacao{
+                width: 50%;
+            }
+
+            .card-reference{
+                overflow: hidden;
+                width: 300px;
+                margin-top: 10px;
+            }
+            .card-reference img{
+                width: 100%;
+            }
+            
+            .elemento{
+                border: 1px solid #000;
+                aspect-ratio: 2;
+                width: 0px;
+                margin-top: 10px;
+            }            
+        </style>
+
+        <style>
+            .cm{
+                height: 30px;
+                vertical-align: bottom;
+                display: table-cell;
+            }
+            .cm .inter{
+                width: 2px;
+                height: 30px;
+                background: #000;
+                vertical-align: bottom;
+            }
+
+            .mm{
+                height: 30px;
+                vertical-align: bottom;
+                display: table-cell;
+            }
+            .mm .inter{
+                width: 1px;
+                height: 15px;
+                background: #333;
+                vertical-align: bottom;
+            }
+            .cm2{
+                height: 30px;
+                vertical-align: bottom;
+                display: table-cell;
+            }
+
+            .cm2 .inter{
+                width: 1px;
+                height: 20px;
+                background: #333;
+                vertical-align: bottom;
+            }
+
+            .cm-letter{
+                height: 30px;
+                vertical-align: bottom;
+                display: table-cell;
+                text-align: center;
+            }
+
+            .cm-letter-inter{
+                height: 30px;
+                vertical-align: bottom;
+                display: table-cell;
+                text-align: left;
+            }
+        </style>
+
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script>
+            function criarRegua(mm, id){
+                var html = '';
+                $('#'+id).css({height: '60px;', display: 'flex', width:'100%;'});
+                var width = $('#'+id).width();
+                var scale = width/mm;
+                console.log(scale);
+                html += '<div class="inter-number">';
+                html += '<div class="cm-letter-inter"> </div>';
+                for(var i = 5; i< mm; i++){
+                    if(i % 10 == 0){
+                        html += '<div class="cm-letter">';
+                        if(scale > 2){
+                            html += (i/10);
+                        }else{
+                            if(i % 20 == 0){
+                                html += (i/10);
+                            }
+                        }
+                        html += '</div>';
+                    }
+                }
+
+
+                html += '<div class="inter-regua">';
+                for(var i = 0; i< mm; i++){
+                    if(i % 10 == 0){
+                        html += '<div class="cm"><div class="inter"></div></div>';
+                    }else if(i%5 == 0){
+                        html += '<div class="cm2"><div class="inter"></div></div>';
+                    }else{
+                        html += '<div class="mm"><div class="inter"></div></div>';
+                    }
+                }
+                html += '</div>';
+
+
+
+                $('#'+id).html(html);
+
+                $('.cm').css({width: (width/mm)+'px'});
+                $('.cm2').css({width: (width/mm)+'px'});
+                $('.mm').css({width: (width/mm)+'px'});
+                if(scale < 1){
+                    $('.cm2 > .inter').css({background: 'none'});
+                }
+                if(scale < 2){
+                    $('.mm > .inter').css({background: 'none'});
+                }
+                $('.cm-letter-inter').css({width: (width/mm*5)+'px'});
+                $('.cm-letter').css({width: (width/mm*10)+'px'});
+            }
+        
+            $(document).ready(function(){
+                criarRegua(300, 'regua');
+
+                var cardWidth = $('.card-reference').width(),
+                    cartaoFisico = 5;
+
+                $('input[name=size]').on('change input', function(){
+                    var value = $(this).val(); 
+
+                    $('.card-reference').css('width', value+'px');
+                    $('.card-reference').val(value);
+
+                    $('#tamanho').text(value+'px');
+
+                    cardWidth = $('.card-reference').width();
+                });
+
+                $('.sub').on('click', function(){
+                    var v = $('input[name=size]').val();
+                    $('input[name=size]').val(--v);
+                    $('input[name=size]').trigger('change');
+                });
+                $('.sum').on('click', function(){
+                    var v = $('input[name=size]').val();
+                    $('input[name=size]').val(++v);
+                    $('input[name=size]').trigger('change');
+                });
+
+                $('input[name=size]').attr('max', cardWidth);
+                $('input[name=size]').val(cardWidth);
+
+                //--
+
+                $('input[name=sizeElemento]').on('change input', function(){
+                    var value = $(this).val();
+                    $('#tamanhoElemento').text(conversao(cardWidth, cartaoFisico, value).toFixed(3) + ' cm');
+                    $('.elemento').css('width', value+'px');
+                });
+
+                $('.subElemento').on('click', function(){
+                    var v = $('input[name=sizeElemento]').val();
+                    $('input[name=sizeElemento]').val(--v);
+                    $('input[name=sizeElemento]').trigger('change');
+                });
+                $('.sumElemento').on('click', function(){
+                    var v = $('input[name=sizeElemento]').val();
+                    $('input[name=sizeElemento]').val(++v);
+                    $('input[name=sizeElemento]').trigger('change');
+                });
+
+                function conversao(pixelCartao, tamCartaoCm, novoPixel){
+                    return (novoPixel * tamCartaoCm) / pixelCartao;
+                }
+            });
+        </script>
+    </body>
+</html>
